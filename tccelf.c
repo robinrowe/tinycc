@@ -318,7 +318,8 @@ ST_FUNC size_t section_add(Section *sec, addr_t size, int align)
 ST_FUNC void *section_ptr_add(Section *sec, addr_t size)
 {
     size_t offset = section_add(sec, size, 1);
-    return sec->data + offset;
+    // clang -fsanitize compains about: NULL+value
+    return sec->data ? sec->data + offset : (void *)offset;
 }
 
 #ifndef ELF_OBJ_ONLY
@@ -1129,6 +1130,8 @@ static void relocate_section(TCCState *s1, Section *s, Section *sr)
 
     qrel = (ElfW_Rel *)sr->data;
     for_each_elem(sr, 0, rel, ElfW_Rel) {
+	if (s->data == NULL) /* bss */
+	    continue;
         ptr = s->data + rel->r_offset;
         sym_index = ELFW(R_SYM)(rel->r_info);
         sym = &((ElfW(Sym) *)symtab_section->data)[sym_index];

@@ -117,6 +117,8 @@ ST_FUNC void expect(const char *msg)
 
 #define USE_TAL
 
+#define	POINTER_SIZE sizeof(void *)
+
 #ifndef USE_TAL
 #define tal_free(al, p) tcc_free(p)
 #define tal_realloc(al, p, size) tcc_realloc(p, size)
@@ -157,7 +159,7 @@ typedef struct TinyAlloc {
 } TinyAlloc;
 
 typedef struct tal_header_t {
-    unsigned  size;
+    ALIGNED(POINTER_SIZE) unsigned size;
 #ifdef TAL_DEBUG
     int     line_num; /* negative line_num used for double free check */
     char    file_name[TAL_DEBUG_FILE_LEN + 1];
@@ -246,7 +248,7 @@ static void *tal_realloc_impl(TinyAlloc **pal, void *p, unsigned size TAL_DEBUG_
     tal_header_t *header;
     void *ret;
     int is_own;
-    unsigned adj_size = (size + 3) & -4;
+    unsigned adj_size = (size + POINTER_SIZE - 1) & -POINTER_SIZE;
     TinyAlloc *al = *pal;
 
 tail_call:
@@ -2053,7 +2055,7 @@ static void parse_escape_string(CString *outstr, const uint8_t *buf, int is_long
                         expect("more hex digits in universal-character-name");
                     else
                         goto add_hex_or_ucn;
-                    n = n * 16 + c;
+                    n = (unsigned) n * 16 + c;
                     p++;
                 } while (--i);
 		if (is_long) {

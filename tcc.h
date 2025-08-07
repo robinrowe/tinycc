@@ -99,6 +99,11 @@ extern long double strtold (const char *__nptr, char **__endptr);
 #define offsetof(type, field) ((size_t) &((type *)0)->field)
 #endif
 
+#ifdef __clang__ // clang -fsanitize compains about: NULL+value
+#undef offsetof
+#define offsetof(type, field) __builtin_offsetof(type, field)
+#endif
+
 #ifndef countof
 #define countof(tab) (sizeof(tab) / sizeof((tab)[0]))
 #endif
@@ -1689,7 +1694,7 @@ dwarf_read_sleb128(unsigned char **ln, unsigned char *end)
         retval |= (byte & 0x7f) << (i * 7);
 	if ((byte & 0x80) == 0) {
 	    if ((byte & 0x40) && (i + 1) * 7 < 64)
-		retval |= -1LL << ((i + 1) * 7);
+		retval |= (uint64_t)-1LL << ((i + 1) * 7);
 	    break;
 	}
     }
