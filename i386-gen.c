@@ -18,6 +18,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#ifdef _WIN32
+#define TARGET_DEFS_ONLY
+#endif
+
 #ifdef TARGET_DEFS_ONLY
 
 /* number of available registers */
