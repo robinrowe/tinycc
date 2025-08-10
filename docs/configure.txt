@@ -1,0 +1,66 @@
+c$ ./configure
+Binary directory    /usr/local/bin
+TinyCC directory    /usr/local/lib/tcc
+Library directory   /usr/local/lib
+Include directory   /usr/local/include
+Manual directory    /usr/local/share/man
+Info directory      /usr/local/share/info
+Doc directory       /usr/local/share/doc
+Source path         /media/sf_code/github/tinycc
+Build OS            Linux x86_64
+C compiler          gcc (9.4)
+Target OS           Linux
+CPU                 x86_64
+Triplet             x86_64-linux-gnu
+Creating config.mak and config.h
+
+
+# CPUs Supported
+
+* i386
+* x86_64
+* arm
+* arm64
+* riscv64 RISC-V64
+* c67 Snapdragon 685
+
+# Operating Systems
+
+* Windows 
+* Linux
+* MacOS
+* FreeBSD
+* NetBSD
+* OpenBSD
+* ARM FPA (Floating-Point Accelerator) 
+* Newer VFP (Vector Floating-Point) and NEON
+* EABI (Embedded ABI): Used for embedded systems, often with newlib or no C library
+* Android
+
+
+From ./configure:
+
+DEF-i386           = -DTCC_TARGET_I386
+DEF-i386-win32     = -DTCC_TARGET_I386 -DTCC_TARGET_PE
+DEF-i386-OpenBSD   = $(DEF-i386) -DTARGETOS_OpenBSD
+DEF-x86_64         = -DTCC_TARGET_X86_64
+DEF-x86_64-win32   = -DTCC_TARGET_X86_64 -DTCC_TARGET_PE
+DEF-x86_64-osx     = -DTCC_TARGET_X86_64 -DTCC_TARGET_MACHO
+DEF-arm-fpa        = -DTCC_TARGET_ARM
+DEF-arm-fpa-ld     = -DTCC_TARGET_ARM -DLDOUBLE_SIZE=12
+DEF-arm-vfp        = -DTCC_TARGET_ARM -DTCC_ARM_VFP
+DEF-arm-eabi       = -DTCC_TARGET_ARM -DTCC_ARM_VFP -DTCC_ARM_EABI
+DEF-arm-eabihf     = $(DEF-arm-eabi) -DTCC_ARM_HARDFLOAT
+DEF-arm            = $(DEF-arm-eabihf)
+DEF-arm-NetBSD     = $(DEF-arm-eabihf) -DTARGETOS_NetBSD
+DEF-arm-wince      = $(DEF-arm-eabihf) -DTCC_TARGET_PE
+DEF-arm64          = -DTCC_TARGET_ARM64
+DEF-arm64-osx      = $(DEF-arm64) -DTCC_TARGET_MACHO
+DEF-arm64-FreeBSD  = $(DEF-arm64) -DTARGETOS_FreeBSD
+DEF-arm64-NetBSD   = $(DEF-arm64) -DTARGETOS_NetBSD
+DEF-arm64-OpenBSD  = $(DEF-arm64) -DTARGETOS_OpenBSD
+DEF-riscv64        = -DTCC_TARGET_RISCV64
+DEF-c67            = -DTCC_TARGET_C67 -w # disable warnigs
+DEF-x86_64-FreeBSD = $(DEF-x86_64) -DTARGETOS_FreeBSD
+DEF-x86_64-NetBSD  = $(DEF-x86_64) -DTARGETOS_NetBSD
+DEF-x86_64-OpenBSD = $(DEF-x86_64) -DTARGETOS_OpenBSD

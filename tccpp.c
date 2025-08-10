@@ -117,7 +117,9 @@ ST_FUNC void expect(const char *msg)
 
 #define USE_TAL
 
+#ifndef _WIN32
 #define	POINTER_SIZE sizeof(void *)
+#endif
 
 #ifndef USE_TAL
 #define tal_free(al, p) tcc_free(p)
