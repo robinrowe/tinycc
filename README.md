@@ -128,6 +128,173 @@ dozens of inquiries posted to various employers and three universities didn't
 yield anything at all for 6 month, germany 2025, as far as politics of this were
 concerned.
 
+Michael Ackermann reported on 10 Aug 2025...
+
+Guys,
+tinycc in it's recent form and shape already is capable of compiling and
+statically linking a complete distribution including all required development
+utilities. There's a few limitations with regards to "bootstrapping", which
+i would consider highly relevant too, as a system-integration path for TinyCC
+itself which bootstrappable.org maintained.
+
+Yet i fear tinycc might become de-stabilized with new features added, before
+some known-good working baseline was fully established with a complete
+distribution. Some regressions were noticed already. And bootstrappable.org
+had to maintain a tcc fork too iirc.
+
+The whole approach is documented at the test-site.
+
+I merely hesitate with the devdrop upload, because i've begun intense runtime
+testing, by utilizing the mentioned devdrop as a buildhost itself, seeing to
+_all_ development tooling remained self-hosting and stable... most of which are,
+such as python, perl, autotools, gdb, strace, ...
+
+except bash.static which blocks against bashism inside portage tooling that is
+needed to handle the complexity of toolchain portability and support for
+various ARCH, compatibility with either linux2 and linux5 ABI,
+and full chrooted cross-compiling support etc. etc.
+
+Next, i want to avoid confusion and wasting time of other developers, with
+problems i rather cope with and fix myself before.
+
+Furthermore, it's a few GiB of source distfiles and ISOs, that aren't easily
+provided with a 2Mbps uplink and dynamic IP address, besides time and effort
+to keep things in order with release management.
+
+And finally, if i'm hit by another round of extortion letters and threats from
+bureaucracy and politics in germany, i'll have to worry about other problems. 
+That's no bad intention on my side at all, the bootable devdrop wasn't uploaded
+yet. You've no idea what type of bureaucratic nonsense i was molested with, for
+month and years. Finally, since i've had no better things to do, i had to bake
+bread in grocery store in the morning, and hack tinyfront OS at night. In return
+for being told all that's worth nothing and less than minimum wage.
+
+A large stack of inquiries sent to several dozens of employers and three
+universities yielded no response at all, none, germany.
+
+In the meantime, until and if at all things got settled, i think the linux-tcc
+kernel build could be used for regular compile-time and run-time testing already,
+hence doesn't need much time and effort for regular CI test iterations.
+For the sake of it this kernel even got some cheapo usb2.0 ethernet dongle support
+back on board, which too was a little time and distraction.
+
+The recommended approach would be, to fully stabilize and keeping the known-good
+working baseline intact, and keeping _the_ working kernel while new (optional)
+features get introduced for C11/linux5.
+
+Because, many years ago a guy named seyko2 (who contributed to tcc too),
+already had established a linux-2.4 fork, but it wasn't maintained and
+finally broke again with latest tcc. That wasn't trivial to bisect and debug, for
+month. Otherwise i see no problem with improving TinyCC, if working things don't
+break.
+
+I git-pulled tinycc sources myself once or twice a year only, because i've had
+to rebase a few patches for the build-system and tried to keep the fully forked
+portage tree in sync with main gentoo tree, although a full fork and various blockers
+weren't avoidable anymore. Its a huge fork, and merging back with gentoo is not possible.
+All of this takes time and money which i haven't got, nor the stamina to explain to
+gentoo USE=-cxx with tcc was high priority. And I'm not in the mood to discuss at LKML.
+Of cause userspace parts including the static musl libc.a shouldn't break either,
+however the portage tree fork isn't ready for git-push, it's barely good enough for
+the regular devdrops i compiled.
+
+To answer the question: bugs and features to cope with are collected inside the
+portage tree fork with hundreds of ebuilds and patches, plus the documentation that
+was uploaded. In the near future I hope tinycc devs may utilize the distribution
+for easy re-production of bugs (such as the bash.static one currently which i can't
+at least summarize a reasonable error report for yet, because it's totally erratic)
+
+I'll keep you updated once this issue got resolved.
+
+David Koch's response 11 Aug 2025...
+
+> There's a few limitations with regards to "bootstrapping"
+
+Like https://github.com/fosslinux/live-bootstrap/ ?
+
+> a guy named seyko2 already had established a linux-2.4 fork
+
+I know that one :
+
+https://github.com/seyko2/tccboot
+
+But again, what is expected nowadays is "C11/linux5" support.
+
+There is no point in staying at linux-2.4 just because TCC can't do much more.
+
+TCC had a headstart somewhere in the past because it was innovative, fast, compact and could compile most of the present code base of the time.
+
+New C standards have been published, compilers implemented them, but not TCC that started to lag behind despite coders showing it love and dedication in its maintenance.
+
+Yet in order to stay relevant for ALL use cases, not just a few one that TCC can chew on (without modifying the source code to allow TCC to compile it) it should evolve too.
+
+I used TCC to quick compile Frontier Elite 2 https://github.com/Kochise/GLFrontier-win32/blob/main/src/Makefile-tcc.bat (relative path dependent in my repository tree)
+
+So I know it is capable, while not producing optimized code, at least it works on old code bases.
+
+Yet I tried it on more recent code bases (my own operating system written in C11/C++) and TCC fails.
+
+So I regularly see the "urge" to release a v1, but what for ? What should be into it ?
+
+Current state of "lowest-common-denominator support of ancient compilers" or full support of at least one C standard (C99 ? C11 ?)
+
+TCC is only used by a few now, in very specific cases, because its limitations made it irrelevant beside prototyping or JIT scripting.
+
+That's why many developers that one considered TCC have moved on to more recent and capable compilers.
+
+It's not about restoring TCC's former glory, but to update it to up to date capabilities, while keeping its initial "features" (compact and fast).
+
+## Robin Rowe's Linux-6 Proposal 11 Aug 2025:
+
+On 8/11/2025 3:45 AM, David Koch wrote:
+> Just to feel at ease with a round number or the compiler having crossed a REAL milestone with a complete C standard support ?
+> Then which one should it be ?
+
+If I understand your question, you see two options:
+
+1. Bump tcc to version number to 1.0 now, arbitrarily, for no technical reason
+
+2. Wait for tcc to reach C11, then set version number to 1.0
+
+The argument for option 2 is it seems "a REAL milestone". The argument against is nobody has volunteered, or is being paid, to implement tcc C11 support. Could take forever. 
+
+The argument for option 1 is it would help tcc escape the doldrums of the public not taking tcc seriously because the version number says not to. The argument against is might seem deceptive, if there is no difference between 0.9.28rc and 1.0. 
+
+If as you suggest, we only have this binary multiple choice, and you want to know what I would choose if up to me, I would choose the option that embraces change. Not the option that embraces endless waiting, hoping somebody will do something someday. 
+
+Fabrice Bellard didn't specify which version of ANSI C when he defined the purpose of tcc as, "The Smallest ANSI C compiler". If anyone wants to propose tcc is already good enough to be version 1.0, that would be ok for tcc at ANSI C99. 
+
+Widening our view, reality is not constrained to only two options, of arbitrarily declaring v1 or endlessly waiting. There's a third way. Improve tcc to be able to compile the latest Linux kernel version, currently Linux 6.16 released 27 July 2025. 
+
+I propose that building the latest Linux kernel with tcc, instead of with gcc, be made the milestone to define tcc version 1.0. How does that sound?
+
+Is there anyone excited for building kernels, who would like to volunteer to start this work? I am offering to assist.
+
+>> Who is the build master to track this?
+> Dunno.
+
+If tcc had a build master, I suppose you would know. 
+
+Does anyone want to volunteer to be tcc build master? Would be doing github CI/CD, including building cross-platform, tracking bug-fix progress and defining sprint goals.
+
+>> Who is building software with tcc on ARM Cortex-M?
+> 
+> No me, but since there is support for ARM targets, anyone could theoretically...
+
+Would be interesting to find out who are tcc users.
+
+>> I merely asked what is needed to bring tcc to version 1.0.
+> Again, what the version bump for ?
+
+Wouldn't everyone like tcc to progress beyond 0.9?
+
+>> serious use until 1.0
+> Then tell me what should we put into "serious use" ?
+
+I would like to better understand everyone's goals before offering an opinion what "we" should do. 
+
+Robin
+
 ## Full Documentation
 
 See tcc-doc.html for all the features of TCC.
@@ -282,5 +449,74 @@ tinycc-devel TinyCC development. To see the collection of prior posting to the l
 Savannah.nongnu
 How to submit a patch for project code - Apache Infrastructure Website
 In general. A very few projects don't use an issue tracker. In that case, send the patch as an attachment to an e-mail with a subject prefixed with " [PATCH] ",
+
+## Other Small C Compilers
+
+1. SDCC (Small Device C Compiler)
+
+    Focus: Primarily designed for 8-bit microcontrollers, offering extensive support for architectures like MCS51 (8051), Dallas DS80C390 variants, Freescale (formerly Motorola) HC08, and Zilog Z80-based MCUs (z80, z180, gbz80, Rabbit 2000/3000).
+    Features: Provides a complete development toolchain, including an assembler, linker, simulator, and debugger. Supports ANSI C and includes extensions for microcontroller features like inline assembly and various memory models. According to Ubuntu Manpage, it is described as a "retargettable, optimizing ANSI-C compiler".
+    Standards: Wikipedia states it's a "partially retargetable C compiler". Supports C standards, and the lead maintainer is a committee member who has made contributions to the C standard. 
+
+2. Pelles C
+
+    Focus: Primarily targets Windows development (both 32-bit and 64-bit), including support for Pocket PC.
+    Features: Offers a complete integrated development environment (IDE) with an optimizing C compiler, macro assembler, linker, editor, debugger, and various utilities. Includes features like intrinsic functions (SSE, AVX, etc.), OpenMP support, and an inline assembler (for X86).
+    Standards: Based on LCC, but has been significantly enhanced to support modern C standards like C99, C11, C17, and C23. It is freeware. 
+
+3. LCC (C89)
+
+    Focus: A smaller C compiler, known for its role in education and compiler design studies.
+    Standards: Primarily adheres to the C89 (ANSI C) standard, which dictates that declarations must precede statements within a block, unlike C99 and later versions where they can be mixed.
+    Note: Pelles C was originally based on LCC. 
+
+4. vbcc (C99)
+
+    Focus: Designed for portability and retargetability across various architectures, including 8-bit, 16-bit, 32-bit, and 64-bit systems.
+    Features: Provides features for embedded systems like different pointer sizes, ROM-able code, and interrupt handlers. Supports various backends with different levels of maturity, including 68k, ColdFire, PowerPC, 6502, 80x86, and others. Offers floating-point support and supports file I/O on some targets.
+    Standards: Supports C89 and a subset of C99 features, including variable-length arrays and designated initializers.
+    Note: According to Wikipedia, the compiler itself can run on common operating systems like Windows, Mac OS X, and Unix/Linux. 
+
+5. chibicc
+
+    Focus: A small C compiler primarily developed for educational purposes, serving as a reference implementation for a book on compiler construction.
+    Features: Supports most mandatory and many optional features of C11, along with some GCC extensions. Includes a preprocessor, support for floating-point numbers, bit-fields, variable-length arrays, compound literals, thread-local variables, atomic variables, and more. However, it lacks an optimization pass, resulting in relatively slow code. Does not support complex numbers, K&R-style function prototypes, or GCC-style inline assembly. Digraphs and trigraphs are intentionally omitted.
+    Standards: Aims for C11 compliance, with some C23 features implemented as well.
+    Note: Prioritizes code simplicity and readability over advanced features or optimizations. It compiles C to assembly, but relies on external tools for assembly and linking. 
+
+6. cproc
+
+    Focus: A C11 compiler using QBE as a backend.
+    Features: Implements most of the C11 language and can build significant software projects like GCC 4.7 and binutils. Also supports some C23 features and GNU C extensions. Offers a cc-compatible command line interface and can be invoked without options to preprocess, compile, link, and generate an executable.
+    Standards: Aims for C11 compliance, with some C23 and GNU C extensions included.
+    Note: Was inspired by other small C compilers like 8cc, c, lacc, and scc. 
+
+7. kefir
+
+    Focus: An independent C17 compiler written from scratch, prioritizing self-sufficiency, ABI compatibility, and C17 compliance.
+    Features: Supports modern x86-64 Linux, FreeBSD, OpenBSD, and NetBSD environments. Can produce JSON streams of program representation at various stages and preprocessed source code. Generates DWARF5 debug information for GNU As and supports limited Yasm assembler. Uses a multi-pass approach with an intermediate representation (IR) layer.
+    Standards: Targets C17, with some exceptions. Also has features from the upcoming C23 standard.
+    Note: Does not have a complete compiler driver like most other compilers, requiring manual linking with an assembler and linker. Still under development and not recommended for production use. 
+
+8. slimcc
+
+    Focus: A C23 compiler with support for C2y and GNU extensions.
+    Features: Aims to compile most C89 to C11 projects that don't require optional or compiler-specific features. Can build and pass tests for various real-world projects like CPython, Curl, Git, and OpenSSH. Includes basic code generation optimizations like constant folding and register allocation for temporaries.
+    Standards: Supports C89, C99 features like VLA parameters, and C11 features like _Static_assert() and over-aligned locals.
+    Note: Prioritizes correctness and code readability. Aims to match GCC/Clang behavior for better compatibility with existing code. 
+
+Summary
+These compilers cater to diverse applications and development styles. SDCC and vbcc are excellent choices for embedded systems, while Pelles C is a solid option for Windows development. chibicc is valuable for learning compiler internals, and cproc and slimcc offer more modern C standards and features while maintaining a compact size. The best choice depends on your specific project requirements, target platform, and desired C standard support. 
+
+## TCC in the Wild
+
+Cyan Ogilvie reported on 10 Aug 2025:
+
+Since you asked, we use tcc for serious (production) work - as a JIT to build performance critical parts that aren't appropriate to build in the scripting language that the rest of tha 300k line codebase is built in, and it works really nicely for that (using https://github.com/cyanogilvie/jitc).  For that use case (JIT compiled objects) it's really important that compilation is fast, so TCC ticks that box, and performance even with the really simple code generation that TCC does captures nearly all of the boost we would get from aggressively optimizing compilers without the tooling and boilerplate overhead we would have from maintaining dozens (and growing) micro libraries.  We also get the scripting language benefits with compiled code performance, running on the platforms that are relevant to us (x86_64 and arm64).
+
+C11 (and C23 eventually) are important to me, in the sense that C is actually a great language for what we're doing with it, but having to write for the lowest-common-denominator support of ancient compilers, or people who insist that C should compile in a different language (C++), really harms the quality and maintainability of the code.  The more recent C standards have a lot of things that to my eyes amount to design fixes and real improvements for serious use, and I'm very grateful that tcc supports as much of them as it does, and hope that coverage increases.
+
+Cyan
+
 
 ###
